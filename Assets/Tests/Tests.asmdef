@@ -1,0 +1,14 @@
+{
+    "name": "Tests",
+    "references": [
+        "Slicks"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
