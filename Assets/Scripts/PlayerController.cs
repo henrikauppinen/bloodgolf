@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -9,10 +10,15 @@ public class PlayerController : MonoBehaviour {
   [SerializeField] float enginePower = 0.06f;
   [SerializeField] float brakePower = 0.08f;
   [SerializeField] float windResistancePower = 0.03f;
+  public Text speedText;
+
+  /*
+  
+  speed = 10
+  
+  */
 
   void Update() {
-    float steeringInput = Input.GetAxis("Horizontal") * Time.deltaTime * 120.0f;
-
     float throttle = Input.GetAxis("Vertical");
 
     if (throttle > 0) {
@@ -26,11 +32,16 @@ public class PlayerController : MonoBehaviour {
     }
 
     move();
-    steer(steeringInput);
+    steer();
+    speedText.text = "Speed: " + speed;
   }
 
   public void accelerate() {
-    speed = speed >= maxSpeed ? maxSpeed : speed + enginePower;
+    speed = speed >= maxSpeed ? maxSpeed : speed + speedAddition();
+  }
+
+  public float speedAddition() {
+    return enginePower;
   }
 
   public void decelerate() {
@@ -47,7 +58,8 @@ public class PlayerController : MonoBehaviour {
     transform.Translate(0, 0, speed * Time.deltaTime);
   }
 
-  public void steer(float steeringInput) {
-    transform.Rotate(0, steeringInput, 0);
+  public void steer() {
+    float steeringInput = Input.GetAxis("Horizontal");
+    transform.Rotate(0, steeringInput * Time.deltaTime * 120.0f, 0);
   }
 }
