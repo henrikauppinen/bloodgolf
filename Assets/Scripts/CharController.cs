@@ -7,6 +7,8 @@ public class CharController : MonoBehaviour
 
     Animator animator;
     GameObject ball;
+    public GameObject ArrowPrefab;
+    private GameObject arrow;
     Camera camera;
 
     [SerializeField] float speed = 5.0f;
@@ -48,6 +50,7 @@ public class CharController : MonoBehaviour
             charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, maxCharge);
         }
 
+        
         if (!shootInput && shootPhase)
         {
             shootPhase = false;
@@ -55,7 +58,33 @@ public class CharController : MonoBehaviour
         }
 
         updateCameraPosition(transform.position, ball.transform.position);
+        updateArrow();
+    }
 
+    void updateArrow()
+    {
+        if(!shootPhase)
+        {
+            if(arrow)
+            {
+                arrow.SetActive(false);
+            }
+            return;
+        }
+        if (shootPhase)
+        {
+            if (!arrow)
+            {
+                arrow = Instantiate<GameObject>(ArrowPrefab);
+                Debug.Log(arrow);
+            }
+            arrow.SetActive(true);
+            var vec = GetBallVector();
+            vec.y = 0;
+            arrow.transform.position = ball.transform.position + vec * .2f;
+            arrow.transform.rotation = Quaternion.LookRotation(vec);
+
+        }
     }
 
     void OnGUI()
@@ -76,16 +105,20 @@ public class CharController : MonoBehaviour
 
     void shoot()
     {
-        Transform ballT = ball.GetComponent<Transform>();
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
+        Vector3 normalDirection = GetBallVector();
+        ballRb.AddForce(normalDirection * charge * 100);
+        charge = 0.0f;
+    }
 
+    private Vector3 GetBallVector()
+    {
+        Transform ballT = ball.GetComponent<Transform>();
         Vector3 direction = ballT.position - transform.position;
         float distance = direction.magnitude;
         Vector3 normalDirection = direction / distance;
-
         normalDirection.y = 1.0f;
-        ballRb.AddForce(normalDirection * charge * 100);
-        charge = 0.0f;
+        return normalDirection;
     }
 
     void updateCameraPosition(Vector3 playerPosition, Vector3 ballPosition)
