@@ -46,10 +46,16 @@ public class ScatterTool: EditorWindow {
         GUILayout.Label("Warning: these tools come with no undo at present.", warnStyle);
         using (new EditorGUI.DisabledScope(Selection.gameObjects.Length == 0))
         {
+            GUILayout.BeginHorizontal(groupBoxStyle);
+            if (GUILayout.Button("Randomize All Rotation"))
+            {
+                ScatterUtils.RandomizeAllRotation(Selection.gameObjects);
+            }
             if (GUILayout.Button("Randomize Y Rotation"))
             {
                 ScatterUtils.RandomizeYRotation(Selection.gameObjects);
             }
+            GUILayout.EndHorizontal();
         }
         GUILayout.BeginVertical(groupBoxStyle);
         GUILayout.Label("Place On Ground", boldStyle);

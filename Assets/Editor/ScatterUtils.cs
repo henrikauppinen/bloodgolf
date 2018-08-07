@@ -15,6 +15,15 @@ public static class ScatterUtils {
         }
     }
 
+    public static void RandomizeAllRotation(GameObject[] objects)
+    {
+        Undo.RecordObjects(objects, "Randomize All Rotation");
+        foreach (var obj in objects)
+        {
+            obj.transform.rotation = Random.rotation;
+        }
+    }
+
     public static void PlaceObjectsOnGround(GameObject[] objects, float maxGroundDist = 100, float yOffset = 0)
     {
         Undo.RecordObjects(Selection.gameObjects, "Place On Ground");
