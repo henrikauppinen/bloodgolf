@@ -6,6 +6,7 @@ public class CharController : MonoBehaviour {
 
   Animator animator;
   GameObject ball;
+  Camera camera;
 
   [SerializeField] float speed = 5.0f;
 
@@ -15,6 +16,7 @@ public class CharController : MonoBehaviour {
   private void Start() {
     animator = GetComponent<Animator>();
     ball = GameObject.FindWithTag("Ball");
+    camera = Camera.main;
   }
 
   void Update() {
@@ -36,7 +38,7 @@ public class CharController : MonoBehaviour {
     animator.SetBool("isShooting", shootInput);
     if (shootInput) {
       shootPhase = true;
-      charge = Mathf.Clamp(charge + Time.deltaTime, 0, 5);
+      charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, 10);
     }
 
     if (!shootInput && shootPhase) {
@@ -44,7 +46,7 @@ public class CharController : MonoBehaviour {
       shoot();
     }
 
-    Debug.Log(charge);
+    updateCameraPosition(transform.position, ball.transform.position);
 
   }
 
@@ -56,9 +58,19 @@ public class CharController : MonoBehaviour {
     float distance = direction.magnitude;
     Vector3 normalDirection = direction / distance;
 
-    Debug.Log(normalDirection);
     normalDirection.y = 1.0f;
     ballRb.AddForce(normalDirection * charge * 100);
     charge = 0.0f;
+  }
+
+  void updateCameraPosition(Vector3 playerPosition, Vector3 ballPosition) {
+
+    float cameraDistance = 10 + Mathf.Abs(ballPosition.x - playerPosition.x);
+    Vector3 newCameraPosition = new Vector3(getXBetween(playerPosition, ballPosition), cameraDistance - 3, transform.position.z - cameraDistance);
+    camera.transform.position = newCameraPosition;
+  }
+
+  float getXBetween(Vector3 a, Vector3 b) {
+    return a.x + (b.x - a.x) / 2;
   }
 }
