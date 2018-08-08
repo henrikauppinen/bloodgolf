@@ -57,7 +57,11 @@ public class CharController : MonoBehaviour
 
         if (isMoving)
         {
-            transform.rotation = Quaternion.LookRotation(movement);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                Quaternion.LookRotation(movement),
+                800 * Time.deltaTime,
+            );
         }
 
         animator.SetBool("isWalking", isMoving);
