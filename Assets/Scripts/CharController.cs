@@ -11,8 +11,7 @@ public class CharController : MonoBehaviour
     private GameObject arrow;
     Camera camera;
 
-    [SerializeField] float speed = 5.0f;
-
+    public float WalkingSpeed = 5.0f;
     public int PlayerID = 1;
     public float MaximumShootDistance = 2f;
     public float MaximumBallSpeedForShoot = 5;
@@ -20,9 +19,7 @@ public class CharController : MonoBehaviour
 
     bool shootPhase = false;
     float charge = 0.0f;
-
     private readonly float maxCharge = 10;
-
     private string xAxis;
     private string yAxis;
     private string shootKey;
@@ -30,14 +27,25 @@ public class CharController : MonoBehaviour
 
     private void Start()
     {
+        name = "Player-" + PlayerID;
         animator = GetComponent<Animator>();
-        ball = GameObject.FindWithTag("Ball");
+        SpawnBall();
         camera = Camera.main;
         xAxis = string.Format("X{0}", PlayerID);
         yAxis = string.Format("Y{0}", PlayerID);
         shootKey = string.Format("Shoot{0}", PlayerID);
         altKey = string.Format("Alt{0}", PlayerID);
 
+    }
+
+    private void SpawnBall()
+    {
+        ball = Instantiate(Resources.Load<GameObject>("Ball"));
+        ball.tag = "Ball";
+        ball.name = "Ball-" + PlayerID;
+        var ballPos = transform.position + transform.rotation * Vector3.forward * 5;
+        ballPos.y = transform.position.y + 5;
+        ball.transform.position = ballPos;
     }
 
     private bool IsInRangeForShoot()
@@ -57,8 +65,8 @@ public class CharController : MonoBehaviour
 
     void Update()
     {
-        float horizontalInput = Input.GetAxis(xAxis) * Time.deltaTime * speed;
-        float verticalInput = Input.GetAxis(yAxis) * Time.deltaTime * speed;
+        float horizontalInput = Input.GetAxis(xAxis) * Time.deltaTime * WalkingSpeed;
+        float verticalInput = Input.GetAxis(yAxis) * Time.deltaTime * WalkingSpeed;
         bool shootInput = Input.GetAxis(shootKey) > 0.5;
 
         Vector3 movement = new Vector3(horizontalInput, 0, verticalInput);
