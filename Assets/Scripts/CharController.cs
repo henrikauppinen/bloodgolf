@@ -13,19 +13,31 @@ public class CharController : MonoBehaviour
 
     [SerializeField] float speed = 5.0f;
 
+    public int PlayerID = 1;
     public float MaximumShootDistance = 2f;
     public float MaximumBallSpeedForShoot = 5;
 
 
     bool shootPhase = false;
     float charge = 0.0f;
+
     private readonly float maxCharge = 10;
+
+    private string xAxis;
+    private string yAxis;
+    private string shootKey;
+    private string altKey;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         ball = GameObject.FindWithTag("Ball");
         camera = Camera.main;
+        xAxis = string.Format("X{0}", PlayerID);
+        yAxis = string.Format("Y{0}", PlayerID);
+        shootKey = string.Format("Shoot{0}", PlayerID);
+        altKey = string.Format("Alt{0}", PlayerID);
+
     }
 
     private bool IsInRangeForShoot()
@@ -45,9 +57,9 @@ public class CharController : MonoBehaviour
 
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal") * Time.deltaTime * speed;
-        float verticalInput = Input.GetAxis("Vertical") * Time.deltaTime * speed;
-        bool shootInput = Input.GetKey(KeyCode.Space);
+        float horizontalInput = Input.GetAxis(xAxis) * Time.deltaTime * speed;
+        float verticalInput = Input.GetAxis(yAxis) * Time.deltaTime * speed;
+        bool shootInput = Input.GetAxis(shootKey) > 0.5;
 
         Vector3 movement = new Vector3(horizontalInput, 0, verticalInput);
 
@@ -60,7 +72,7 @@ public class CharController : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 Quaternion.LookRotation(movement),
-                800 * Time.deltaTime,
+                800 * Time.deltaTime
             );
         }
 
