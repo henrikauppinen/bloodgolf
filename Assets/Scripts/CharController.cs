@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-
     Animator animator;
     GameObject ball;
     private GameObject arrow;
-    Camera camera;
 
     public float WalkingSpeed = 5.0f;
     public int PlayerID = 1;
@@ -29,12 +27,15 @@ public class CharController : MonoBehaviour
         name = "Player-" + PlayerID;
         animator = GetComponent<Animator>();
         SpawnBall();
-        camera = Camera.main;
         xAxis = string.Format("X{0}", PlayerID);
         yAxis = string.Format("Y{0}", PlayerID);
         shootKey = string.Format("Shoot{0}", PlayerID);
         altKey = string.Format("Alt{0}", PlayerID);
-
+        var cameraController = Camera.main.GetComponent<CameraController>();
+        if(cameraController)
+        {
+            cameraController.UpdateObjectLists();
+        }
     }
 
     private void SpawnBall()
@@ -131,7 +132,6 @@ public class CharController : MonoBehaviour
             charge = 0;
         }
 
-        updateCameraPosition(transform.position, ball.transform.position);
         updateArrow();
     }
 
@@ -164,7 +164,7 @@ public class CharController : MonoBehaviour
         var chargeBarWidth = (Screen.width / 5);
         if (shootPhase)
         {
-            var pos = camera.WorldToScreenPoint(transform.position);
+            var pos = Camera.main.WorldToScreenPoint(transform.position);
 
             var chargeP = charge / maxCharge;
             var oldColor = GUI.color;
@@ -191,18 +191,5 @@ public class CharController : MonoBehaviour
         Vector3 normalDirection = direction / distance;
         normalDirection.y = 1.0f;
         return normalDirection;
-    }
-
-    void updateCameraPosition(Vector3 playerPosition, Vector3 ballPosition)
-    {
-
-        float cameraDistance = 10 + Mathf.Abs(ballPosition.x - playerPosition.x);
-        Vector3 newCameraPosition = new Vector3(getXBetween(playerPosition, ballPosition), cameraDistance - 3, transform.position.z - cameraDistance);
-        camera.transform.position = newCameraPosition;
-    }
-
-    float getXBetween(Vector3 a, Vector3 b)
-    {
-        return a.x + (b.x - a.x) / 2;
     }
 }

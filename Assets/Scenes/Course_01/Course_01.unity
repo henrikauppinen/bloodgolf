@@ -152,11 +152,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 54390895722087626, guid: ac580fdb974a94e9c894addd2fd21e97,
-        type: 2}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1823779514246130, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
       propertyPath: m_Name
       value: Player2
@@ -169,6 +164,15 @@ Prefab:
     - target: {fileID: 4690970857678150, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 39.718002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1823779514246130, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 54390895722087626, guid: ac580fdb974a94e9c894addd2fd21e97,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
@@ -338,6 +342,7 @@ GameObject:
   - component: {fileID: 747684650}
   - component: {fileID: 747684649}
   - component: {fileID: 747684648}
+  - component: {fileID: 747684651}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -405,6 +410,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 22.649, y: 0, z: 0}
+--- !u!114 &747684651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 747684647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58f00514558251e4e9e6a2988d7ad7de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &954651976
 Prefab:
   m_ObjectHideFlags: 0
@@ -1347,10 +1363,9 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 54390895722087626, guid: ac580fdb974a94e9c894addd2fd21e97,
-        type: 2}
-      propertyPath: m_IsKinematic
-      value: 1
+    - target: {fileID: 1823779514246130, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
