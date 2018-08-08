@@ -7,7 +7,6 @@ public class CharController : MonoBehaviour
 
     Animator animator;
     GameObject ball;
-    public GameObject ArrowPrefab;
     private GameObject arrow;
     Camera camera;
 
@@ -46,6 +45,31 @@ public class CharController : MonoBehaviour
         var ballPos = transform.position + transform.rotation * Vector3.forward * 5;
         ballPos.y = transform.position.y + 5;
         ball.transform.position = ballPos;
+        var playerColor = Constants.PlayerColors[PlayerID - 1];
+        var mr = ball.GetComponent<MeshRenderer>();
+        var mat = new Material(mr.material)
+        {
+            color = Color.Lerp(Color.white, playerColor, .5f)
+        };
+        mr.material = mat;
+        var tr = ball.GetComponent<TrailRenderer>();
+        var cg = new Gradient
+        {
+            mode = GradientMode.Blend
+        };
+        cg.SetKeys(
+            new[]
+            {
+                new GradientColorKey(playerColor, 0),
+                new GradientColorKey(playerColor, 1.0f),
+            },
+            new[] {
+                new GradientAlphaKey(.3f, 0),
+                new GradientAlphaKey(1f, .5f),
+                new GradientAlphaKey(0f, 1.0f),
+            }
+        );
+        tr.colorGradient = cg;
     }
 
     private bool IsInRangeForShoot()
@@ -117,7 +141,7 @@ public class CharController : MonoBehaviour
         {
             if (!arrow)
             {
-                arrow = Instantiate<GameObject>(ArrowPrefab);
+                arrow = Instantiate<GameObject>(Resources.Load<GameObject>("AimArrow"));
                 Debug.Log(arrow);
             }
             arrow.SetActive(true);
