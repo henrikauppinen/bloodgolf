@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
+    private Color playerColor;
     Animator animator;
     GameObject ball;
     private GameObject arrow;
@@ -26,6 +27,7 @@ public class CharController : MonoBehaviour
     private void Start()
     {
         name = "Player-" + PlayerID;
+        playerColor = Constants.PlayerColors[PlayerID - 1];
         animator = GetComponent<Animator>();
         SpawnBall();
         xAxis = string.Format("X{0}", PlayerID);
@@ -33,7 +35,7 @@ public class CharController : MonoBehaviour
         shootKey = string.Format("Shoot{0}", PlayerID);
         altKey = string.Format("Alt{0}", PlayerID);
         var cameraController = Camera.main.GetComponent<CameraController>();
-        if(cameraController)
+        if (cameraController)
         {
             cameraController.UpdateObjectLists();
         }
@@ -49,7 +51,6 @@ public class CharController : MonoBehaviour
         shotStarts.Add(ballPos);
         ball.transform.position = ballPos;
 
-        var playerColor = Constants.PlayerColors[PlayerID - 1];
         var mr = ball.GetComponent<MeshRenderer>();
         var mat = new Material(mr.material)
         {
@@ -177,6 +178,30 @@ public class CharController : MonoBehaviour
             GUI.Box(new Rect(pos.x, Screen.height - pos.y, chargeP * chargeBarWidth, 30), string.Format("{0}%", Mathf.Floor(chargeP * 100)));
             GUI.color = oldColor;
         }
+        DrawBallTrackerGUI();
+    }
+
+    private void DrawBallTrackerGUI()
+    {
+        var ballScreenPos = Camera.main.WorldToScreenPoint(ball.transform.position);
+        ballScreenPos.y = Screen.height - ballScreenPos.y;
+        var offScreenXMargin = Screen.width * -.01;
+        var offScreenYMargin = Screen.height * -.01;
+        if (
+            ballScreenPos.x < -offScreenXMargin || ballScreenPos.x > Screen.width + offScreenXMargin ||
+            ballScreenPos.y < -offScreenYMargin || ballScreenPos.y > Screen.height + offScreenYMargin
+        )
+        {
+            var onScreenXPadding = Screen.width * .06f;
+            var onScreenYPadding = Screen.height * .06f;
+            var onScreenX = Mathf.Clamp(ballScreenPos.x, onScreenXPadding, Screen.width - onScreenXPadding);
+            var onScreenY = Mathf.Clamp(ballScreenPos.y, onScreenYPadding, Screen.height - onScreenYPadding);
+            var distanceVec = (ball.transform.position - transform.position);
+            distanceVec.y = 0;  // ground distance only
+            var distance = distanceVec.magnitude;
+            GUI.color = playerColor;
+            GUI.Label(new Rect(onScreenX, onScreenY, 30, 30), string.Format("{0}m", Mathf.Round(distance)));
+        }
     }
 
     private void Shoot()
@@ -199,7 +224,7 @@ public class CharController : MonoBehaviour
 
     private void CheckBallDeath()
     {
-        if(ball.transform.position.y < -5)
+        if (ball.transform.position.y < -5)
         {
             Debug.Log(string.Format("Player {0}'s ball died :(", PlayerID));
             ResetBall();
