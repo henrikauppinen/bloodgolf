@@ -13,7 +13,7 @@ public class ScatterTool: EditorWindow {
     private int scatterCount = 50;
     private GUIStyle groupBoxStyle;
 
-    [MenuItem("ScatterTool/Open")]
+    [MenuItem("Tools/Open ScatterTool")]
     public static void OpenScatterTool()
     {
         GetWindow<ScatterTool>();
