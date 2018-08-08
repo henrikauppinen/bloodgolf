@@ -12,6 +12,7 @@ public class CharController : MonoBehaviour
     public int PlayerID = 1;
     public float MaximumShootDistance = 2f;
     public float MaximumBallSpeedForShoot = 5;
+    private List<Vector3> shotStarts = new List<Vector3>();
 
 
     bool shootPhase = false;
@@ -45,7 +46,9 @@ public class CharController : MonoBehaviour
         ball.name = "Ball-" + PlayerID;
         var ballPos = transform.position + transform.rotation * Vector3.forward * 5;
         ballPos.y = transform.position.y + 5;
+        shotStarts.Add(ballPos);
         ball.transform.position = ballPos;
+
         var playerColor = Constants.PlayerColors[PlayerID - 1];
         var mr = ball.GetComponent<MeshRenderer>();
         var mat = new Material(mr.material)
@@ -123,7 +126,7 @@ public class CharController : MonoBehaviour
             if (!shootInput && shootPhase)
             {
                 shootPhase = false;
-                shoot();
+                Shoot();
             }
         }
         else
@@ -133,6 +136,7 @@ public class CharController : MonoBehaviour
         }
 
         updateArrow();
+        CheckBallDeath();
     }
 
     void updateArrow()
@@ -175,8 +179,9 @@ public class CharController : MonoBehaviour
         }
     }
 
-    void shoot()
+    private void Shoot()
     {
+        shotStarts.Add(ball.transform.position);
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
         Vector3 normalDirection = GetBallVector();
         ballRb.AddForce(normalDirection * charge * 100);
@@ -185,11 +190,27 @@ public class CharController : MonoBehaviour
 
     private Vector3 GetBallVector()
     {
-        Transform ballT = ball.GetComponent<Transform>();
-        Vector3 direction = ballT.position - transform.position;
+        Vector3 direction = ball.transform.position - transform.position;
         float distance = direction.magnitude;
         Vector3 normalDirection = direction / distance;
         normalDirection.y = 1.0f;
         return normalDirection;
+    }
+
+    private void CheckBallDeath()
+    {
+        if(ball.transform.position.y < -5)
+        {
+            Debug.Log(string.Format("Player {0}'s ball died :(", PlayerID));
+            ResetBall();
+        }
+    }
+
+    private void ResetBall()
+    {
+        Rigidbody ballRb = ball.GetComponent<Rigidbody>();
+        ballRb.velocity = Vector3.up * 5;
+        ballRb.angularVelocity = Vector3.zero;
+        ball.transform.position = shotStarts[shotStarts.Count - 1];
     }
 }
