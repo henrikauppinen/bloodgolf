@@ -13,6 +13,9 @@ public class CharController : MonoBehaviour
 
     [SerializeField] float speed = 5.0f;
 
+    public float MaximumShootDistance = 2f;
+    public float MaximumBallSpeedForShoot = 5;
+
 
     bool shootPhase = false;
     float charge = 0.0f;
@@ -23,6 +26,21 @@ public class CharController : MonoBehaviour
         animator = GetComponent<Animator>();
         ball = GameObject.FindWithTag("Ball");
         camera = Camera.main;
+    }
+
+    private bool IsInRangeForShoot()
+    {
+        var distSqr = (transform.position - ball.transform.position).sqrMagnitude;
+        if (distSqr > MaximumShootDistance * MaximumShootDistance)  // Too far away
+        {
+            return false;
+        }
+        var rb = ball.GetComponent<Rigidbody>();
+        if (rb.velocity.sqrMagnitude > MaximumBallSpeedForShoot * MaximumBallSpeedForShoot)  // Ball rolling
+        {
+            return false;
+        }
+        return true;
     }
 
     void Update()
@@ -43,18 +61,26 @@ public class CharController : MonoBehaviour
         }
 
         animator.SetBool("isWalking", isMoving);
-        animator.SetBool("isShooting", shootInput);
-        if (shootInput)
+        animator.SetBool("isShooting", shootPhase);
+        if (IsInRangeForShoot())
         {
-            shootPhase = true;
-            charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, maxCharge);
-        }
+            if (shootInput)
+            {
+                shootPhase = true;
+                charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, maxCharge);
+            }
 
-        
-        if (!shootInput && shootPhase)
+
+            if (!shootInput && shootPhase)
+            {
+                shootPhase = false;
+                shoot();
+            }
+        }
+        else
         {
             shootPhase = false;
-            shoot();
+            charge = 0;
         }
 
         updateCameraPosition(transform.position, ball.transform.position);
@@ -63,15 +89,7 @@ public class CharController : MonoBehaviour
 
     void updateArrow()
     {
-        if(!shootPhase)
-        {
-            if(arrow)
-            {
-                arrow.SetActive(false);
-            }
-            return;
-        }
-        if (shootPhase)
+        if (IsInRangeForShoot() || shootPhase)
         {
             if (!arrow)
             {
@@ -83,7 +101,13 @@ public class CharController : MonoBehaviour
             vec.y = 0;
             arrow.transform.position = ball.transform.position + vec * .2f;
             arrow.transform.rotation = Quaternion.LookRotation(vec);
-
+        }
+        else
+        {
+            if (arrow)
+            {
+                arrow.SetActive(false);
+            }
         }
     }
 

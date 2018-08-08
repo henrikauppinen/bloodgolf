@@ -1329,12 +1329,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114086902383719542, guid: ac580fdb974a94e9c894addd2fd21e97,
+    - target: {fileID: 54390895722087626, guid: ac580fdb974a94e9c894addd2fd21e97,
         type: 2}
-      propertyPath: ArrowPrefab
-      value: 
-      objectReference: {fileID: 1448624983564520, guid: 6d79c7c56feee184caf82a3f3e16ce4c,
-        type: 2}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac580fdb974a94e9c894addd2fd21e97, type: 2}
   m_IsPrefabAsset: 0
