@@ -8,6 +8,8 @@ public class CharController : MonoBehaviour
     Animator animator;
     GameObject ball;
     private GameObject arrow;
+    private AudioSource swingSoundSource;
+    private AudioSource shootSoundSource;
 
     public float WalkingSpeed = 5.0f;
     public int PlayerID = 1;
@@ -29,6 +31,10 @@ public class CharController : MonoBehaviour
         name = "Player-" + PlayerID;
         playerColor = Constants.PlayerColors[PlayerID - 1];
         animator = GetComponent<Animator>();
+        swingSoundSource = gameObject.AddComponent<AudioSource>();
+        swingSoundSource.clip = Resources.Load<AudioClip>("Sounds/SwingPower");
+        shootSoundSource = gameObject.AddComponent<AudioSource>();
+        shootSoundSource.clip = Resources.Load<AudioClip>("Sounds/Shoot");
         SpawnBall();
         xAxis = string.Format("X{0}", PlayerID);
         yAxis = string.Format("Y{0}", PlayerID);
@@ -119,8 +125,13 @@ public class CharController : MonoBehaviour
         {
             if (shootInput)
             {
+                if(!shootPhase)
+                {
+                    swingSoundSource.Play();
+                }
                 shootPhase = true;
                 charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, maxCharge);
+                
             }
 
 
@@ -134,6 +145,7 @@ public class CharController : MonoBehaviour
         {
             shootPhase = false;
             charge = 0;
+            swingSoundSource.Stop();
         }
 
         updateArrow();
@@ -206,6 +218,8 @@ public class CharController : MonoBehaviour
 
     private void Shoot()
     {
+        swingSoundSource.Stop();
+        shootSoundSource.Play();
         shotStarts.Add(ball.transform.position);
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
         Vector3 normalDirection = GetBallVector();
