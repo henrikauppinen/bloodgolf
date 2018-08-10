@@ -17,10 +17,17 @@ public class CharController : MonoBehaviour
     public float MaximumBallSpeedForShoot = 5;
     private List<Vector3> shotStarts = new List<Vector3>();
 
+    enum CharMode
+    {
+        Walk,
+        Shoot,
+    };
 
-    bool shootPhase = false;
+    private CharMode charMode = CharMode.Walk;
+    private float shootModeStartTime;
+    private float shootAngleDeg;
+    private float shootStartDst;
     float charge = 0.0f;
-    private readonly float maxCharge = 10;
     private string xAxis;
     private string yAxis;
     private string shootKey;
@@ -33,6 +40,7 @@ public class CharController : MonoBehaviour
         animator = GetComponent<Animator>();
         swingSoundSource = gameObject.AddComponent<AudioSource>();
         swingSoundSource.clip = Resources.Load<AudioClip>("Sounds/SwingPower");
+        swingSoundSource.loop = true;
         shootSoundSource = gameObject.AddComponent<AudioSource>();
         shootSoundSource.clip = Resources.Load<AudioClip>("Sounds/Shoot");
         SpawnBall();
@@ -102,50 +110,82 @@ public class CharController : MonoBehaviour
     {
         float horizontalInput = Input.GetAxis(xAxis) * Time.deltaTime * WalkingSpeed;
         float verticalInput = Input.GetAxis(yAxis) * Time.deltaTime * WalkingSpeed;
-        bool shootInput = Input.GetAxis(shootKey) > 0.5;
+        bool shootInputPressed = Input.GetButtonUp(shootKey);
 
-        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput);
-
-        transform.Translate(movement, Space.World);
-
-        bool isMoving = movement != Vector3.zero;
-
-        if (isMoving)
+        bool isMoving = false;
+        if (charMode == CharMode.Walk)
         {
+            var movement = new Vector3(horizontalInput, 0, verticalInput);
+            transform.Translate(movement, Space.World);
+            isMoving = movement != Vector3.zero;
+            if (isMoving)
+            {
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(movement),
+                    800 * Time.deltaTime
+                );
+            }
+        } else if(charMode == CharMode.Shoot) {
+            var angleDelta = Input.GetAxis(xAxis) * Time.deltaTime * -180;
+            shootAngleDeg += angleDelta;
+            var shootAngleRad = Mathf.Deg2Rad * shootAngleDeg;
+            var dst = -Mathf.Min(shootStartDst, MaximumShootDistance * .95f);
+            var newPos = new Vector3(
+                ball.transform.position.x + Mathf.Cos(shootAngleRad) * dst,
+                transform.position.y,
+                ball.transform.position.z + Mathf.Sin(shootAngleRad) * dst
+            );
+            var oldPos = transform.position;
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                newPos,
+                Time.deltaTime * WalkingSpeed
+            );
+            var posDelta2d = ball.transform.position - transform.position;
+            posDelta2d.y = 0;
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                Quaternion.LookRotation(movement),
-                800 * Time.deltaTime
+                Quaternion.LookRotation(posDelta2d),
+                200 * Time.deltaTime
             );
+            isMoving = Mathf.Abs(angleDelta) > 0;
         }
 
         animator.SetBool("isWalking", isMoving);
-        animator.SetBool("isShooting", shootPhase);
+        //animator.SetBool("isShooting", charMode == CharMode.Shoot);
+        if(charMode == CharMode.Shoot) {
+            float w = ((Time.time - shootModeStartTime) * 3) / Mathf.PI * 2;
+            float chargeWave = -Mathf.Cos(w);
+            charge = Mathf.Clamp01(chargeWave * 0.5f + 0.5f);
+            swingSoundSource.pitch = 1.0f + chargeWave * .5f;
+        }
         if (IsInRangeForShoot())
         {
-            if (shootInput)
+            if (shootInputPressed)
             {
-                if(!shootPhase)
-                {
+                if(charMode == CharMode.Walk) {
+                    charMode = CharMode.Shoot;
+                    shootModeStartTime = Time.time;
+                    var ballPos2d = new Vector2(ball.transform.position.x, ball.transform.position.z);
+                    var playerPos2d = new Vector2(transform.position.x, transform.position.z);
+                    var delta2d = playerPos2d - ballPos2d;
+                    shootAngleDeg = Mathf.Rad2Deg * Mathf.Atan2(delta2d.y, delta2d.x) + 180;
+                    shootStartDst = delta2d.magnitude;
                     swingSoundSource.Play();
+                } else if(charMode == CharMode.Shoot) {
+                    Shoot();
                 }
-                shootPhase = true;
-                charge = Mathf.Clamp(charge + Time.deltaTime * 5.0f, 0, maxCharge);
-                
-            }
-
-
-            if (!shootInput && shootPhase)
-            {
-                shootPhase = false;
-                Shoot();
             }
         }
         else
         {
-            shootPhase = false;
-            charge = 0;
-            swingSoundSource.Stop();
+            if (charMode == CharMode.Shoot)
+            {
+                charMode = CharMode.Walk;
+                charge = 0;
+                swingSoundSource.Stop();
+            }
         }
 
         updateArrow();
@@ -154,12 +194,11 @@ public class CharController : MonoBehaviour
 
     void updateArrow()
     {
-        if (IsInRangeForShoot() || shootPhase)
+        if (IsInRangeForShoot() || charMode == CharMode.Shoot)
         {
             if (!arrow)
             {
                 arrow = Instantiate<GameObject>(Resources.Load<GameObject>("AimArrow"));
-                Debug.Log(arrow);
             }
             arrow.SetActive(true);
             var vec = GetBallVector();
@@ -179,15 +218,17 @@ public class CharController : MonoBehaviour
     void OnGUI()
     {
         var chargeBarWidth = (Screen.width / 5);
-        if (shootPhase)
+        if (charMode == CharMode.Shoot)
         {
             var pos = Camera.main.WorldToScreenPoint(transform.position);
-
-            var chargeP = charge / maxCharge;
+            var chargeP = charge;
             var oldColor = GUI.color;
             GUI.Box(new Rect(pos.x, Screen.height - pos.y, chargeBarWidth, 30), "");
-            GUI.color = Color.Lerp(Color.yellow, Color.red, chargeP);
-            GUI.Box(new Rect(pos.x, Screen.height - pos.y, chargeP * chargeBarWidth, 30), string.Format("{0}%", Mathf.Floor(chargeP * 100)));
+            if (chargeP > 0)
+            {
+                GUI.color = Color.Lerp(Color.yellow, Color.red, chargeP);
+                GUI.Box(new Rect(pos.x, Screen.height - pos.y, chargeP * chargeBarWidth, 30), string.Format("{0}%", Mathf.Floor(chargeP * 100)));
+            }
             GUI.color = oldColor;
         }
         DrawBallTrackerGUI();
@@ -218,13 +259,17 @@ public class CharController : MonoBehaviour
 
     private void Shoot()
     {
+        charMode = CharMode.Walk;
         swingSoundSource.Stop();
+        if(charge < 0.03) {
+            return;
+        }
         shootSoundSource.Play();
         shotStarts.Add(ball.transform.position);
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
         Vector3 normalDirection = GetBallVector();
-        ballRb.AddForce(normalDirection * charge * 100);
-        charge = 0.0f;
+        ballRb.AddForce(normalDirection * charge * 1000);
+
     }
 
     private Vector3 GetBallVector()
