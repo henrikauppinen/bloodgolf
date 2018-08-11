@@ -15,6 +15,12 @@ public partial class CharController : MonoBehaviour {
     public float MaximumShootDistance = 2f;
     public float MaximumBallSpeedForShoot = 5;
 
+    public float NumShots {
+        get {
+            return shotStarts.Count - 1;
+        }
+    }
+
     private void InitializeShooting() {
         swingSoundSource = gameObject.AddComponent<AudioSource>();
         swingSoundSource.clip = Resources.Load<AudioClip>("Sounds/SwingPower");
@@ -29,9 +35,9 @@ public partial class CharController : MonoBehaviour {
         var shootAngleRad = Mathf.Deg2Rad * shootAngleDeg;
         var dst = -Mathf.Min(shootStartDst, MaximumShootDistance * .95f);
         var newPos = new Vector3(
-            ball.transform.position.x + Mathf.Cos(shootAngleRad) * dst,
+            Ball.transform.position.x + Mathf.Cos(shootAngleRad) * dst,
             transform.position.y,
-            ball.transform.position.z + Mathf.Sin(shootAngleRad) * dst
+            Ball.transform.position.z + Mathf.Sin(shootAngleRad) * dst
         );
         var oldPos = transform.position;
         transform.position = Vector3.MoveTowards(
@@ -39,7 +45,7 @@ public partial class CharController : MonoBehaviour {
             newPos,
             Time.deltaTime * WalkingSpeed
         );
-        var posDelta2d = ball.transform.position - transform.position;
+        var posDelta2d = Ball.transform.position - transform.position;
         posDelta2d.y = 0;
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
@@ -52,12 +58,12 @@ public partial class CharController : MonoBehaviour {
 
     private bool IsInRangeForShoot()
     {
-        var distSqr = (transform.position - ball.transform.position).sqrMagnitude;
+        var distSqr = (transform.position - Ball.transform.position).sqrMagnitude;
         if (distSqr > MaximumShootDistance * MaximumShootDistance)  // Too far away
         {
             return false;
         }
-        var rb = ball.GetComponent<Rigidbody>();
+        var rb = Ball.GetComponent<Rigidbody>();
         if (rb.velocity.sqrMagnitude > MaximumBallSpeedForShoot * MaximumBallSpeedForShoot)  // Ball rolling
         {
             return false;
@@ -82,7 +88,7 @@ public partial class CharController : MonoBehaviour {
     private void EnterShootMode() {
         charMode = CharMode.Shoot;
         shootModeStartTime = Time.time;
-        var ballPos2d = new Vector2(ball.transform.position.x, ball.transform.position.z);
+        var ballPos2d = new Vector2(Ball.transform.position.x, Ball.transform.position.z);
         var playerPos2d = new Vector2(transform.position.x, transform.position.z);
         var delta2d = playerPos2d - ballPos2d;
         shootAngleDeg = Mathf.Rad2Deg * Mathf.Atan2(delta2d.y, delta2d.x) + 180;
@@ -104,8 +110,8 @@ public partial class CharController : MonoBehaviour {
             return;
         }
         shootSoundSource.Play();
-        shotStarts.Add(ball.transform.position);
-        Rigidbody ballRb = ball.GetComponent<Rigidbody>();
+        shotStarts.Add(Ball.transform.position);
+        Rigidbody ballRb = Ball.GetComponent<Rigidbody>();
         Vector3 normalDirection = GetBallVector();
         ballRb.AddForce(normalDirection * charge * 1000);
     }

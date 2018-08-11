@@ -4,11 +4,16 @@ using UnityEngine;
 
 public partial class CharController : MonoBehaviour
 {
-    private Color playerColor;
+    public Color PlayerColor { get; private set; }
     private Animator animator;
-    private GameObject ball;
+    public GameObject Ball { get; private set; }
     private GameObject arrow;
     public int PlayerID = 1;
+
+    public int Health {
+        get;
+        private set;
+    }
 
     enum CharMode
     {
@@ -25,8 +30,9 @@ public partial class CharController : MonoBehaviour
 
     private void Start()
     {
+        Health = 100;
         name = "Player-" + PlayerID;
-        playerColor = Constants.PlayerColors[PlayerID - 1];
+        PlayerColor = Constants.PlayerColors[PlayerID - 1];
         animator = GetComponent<Animator>();
         xAxis = string.Format("X{0}", PlayerID);
         yAxis = string.Format("Y{0}", PlayerID);
@@ -62,7 +68,7 @@ public partial class CharController : MonoBehaviour
             arrow.SetActive(true);
             var vec = GetBallVector();
             vec.y = 0;
-            arrow.transform.position = ball.transform.position + vec * .2f;
+            arrow.transform.position = Ball.transform.position + vec * .2f;
             arrow.transform.rotation = Quaternion.LookRotation(vec);
         }
         else
@@ -75,13 +81,11 @@ public partial class CharController : MonoBehaviour
     }
 
     void OnGUI()
-    {
-        
+    {   
         if (charMode == CharMode.Shoot)
         {
             DrawShootGUI();
         }
-        DrawBallTrackerGUI();
     }
 
 }
