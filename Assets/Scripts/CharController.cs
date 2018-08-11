@@ -34,11 +34,7 @@ public partial class CharController : MonoBehaviour
         altKey = string.Format("Alt{0}", PlayerID);
         InitializeShooting();
         SpawnBall();
-        var cameraController = Camera.main.GetComponent<CameraController>();
-        if (cameraController)
-        {
-            cameraController.UpdateObjectLists();
-        }
+        GameController.instance.UpdateObjectLists();
     }
 
     void Update()

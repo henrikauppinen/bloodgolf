@@ -2,12 +2,9 @@
 
 public class CameraController : MonoBehaviour {
     private new Camera camera;
-    private GameObject[] balls = new GameObject[] { };
-    private GameObject[] players = new GameObject[] { };
 
     void Start () {
         camera = GetComponent<Camera>();
-        UpdateObjectLists();
     }
 	
 	void Update ()
@@ -49,7 +46,7 @@ public class CameraController : MonoBehaviour {
     {
         var bbox = new Bounds();
         var first = true;
-        foreach (var player in players)
+        foreach (var player in GameController.instance.Players)
         {
             if (first)
             {
@@ -74,17 +71,5 @@ public class CameraController : MonoBehaviour {
         */
 
         return bbox;
-    }
-
-    float getXBetween(Vector3 a, Vector3 b)
-    {
-        return a.x + (b.x - a.x) / 2;
-    }
-
-    public void UpdateObjectLists()
-    {
-        balls = GameObject.FindGameObjectsWithTag("Ball");
-        players = GameObject.FindGameObjectsWithTag("Player");
-        UpdatePositionAndRotation(true);
     }
 }
