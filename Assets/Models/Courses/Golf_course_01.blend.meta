@@ -8,11 +8,19 @@ ModelImporter:
     2100000: Grass_Rough
     2100002: Grass_Fairway
     2100004: Grass_Putting_green
+    2100006: Grass_Rough__Texture_001
+    2100008: Grass_Fairway__Texture_001
+    2100010: Grass_Putting_green__Texture_001
+    2100012: Grass_Rough__Texture
+    2100014: Grass_Fairway__Texture
+    2100016: Grass_Putting_green__Texture
     2300000: //RootNode
     3300000: //RootNode
     4300000: Course_01
+    6400000: //RootNode
     7400000: Default Take
     9500000: //RootNode
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -46,11 +54,11 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importVisibility: 1
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
