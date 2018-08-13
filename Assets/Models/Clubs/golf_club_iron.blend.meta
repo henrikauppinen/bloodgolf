@@ -1,27 +1,17 @@
 fileFormatVersion: 2
-guid: 36a7eae79184e496daff86880a1e3830
+guid: 0b4c3ba10622646e9af5caec546bc97a
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Wheel back
-    100004: Wheel front
-    100006: Wheels
     400000: //RootNode
-    400002: Wheel back
-    400004: Wheel front
-    400006: Wheels
-    2100000: Paint
-    2100002: Rubber
+    2100000: Steel
+    2100002: Handle
     2300000: //RootNode
-    2300002: Wheel back
-    2300004: Wheel front
     3300000: //RootNode
-    3300002: Wheel back
-    3300004: Wheel front
-    4300000: Car
-    4300002: Wheel front
-    4300004: Wheel back
+    4300000: Club
+    7400000: Default Take
+    9500000: //RootNode
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -61,7 +51,7 @@ ModelImporter:
     importCameras: 1
     importLights: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
@@ -74,7 +64,7 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
     previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 0
+    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -99,7 +89,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

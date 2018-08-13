@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 
-public class CameraController : MonoBehaviour {
+public class CameraController : MonoBehaviour
+{
     private new Camera camera;
 
-    void Start () {
+    void Start()
+    {
         camera = GetComponent<Camera>();
     }
-	
-	void Update ()
+
+    void Update()
     {
-        Bounds bbox = GetActionBounds();
         UpdatePositionAndRotation();
     }
 
@@ -46,6 +47,9 @@ public class CameraController : MonoBehaviour {
     {
         var bbox = new Bounds();
         var first = true;
+
+        if (GameController.instance == null) return bbox;
+
         foreach (var player in GameController.instance.Players)
         {
             if (first)
