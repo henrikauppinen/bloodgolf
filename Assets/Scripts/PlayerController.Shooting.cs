@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CharController : MonoBehaviour {
+public partial class PlayerController : MonoBehaviour {
 
     private List<Vector3> shotStarts = new List<Vector3>();
     private AudioSource swingSoundSource;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CharController : MonoBehaviour {
+public partial class PlayerController : MonoBehaviour {
     private void SpawnBall()
     {
         Ball = Instantiate(Resources.Load<GameObject>("Ball"));

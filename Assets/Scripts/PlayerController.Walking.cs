@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CharController : MonoBehaviour {
-
+public partial class PlayerController : MonoBehaviour
+{
     public float WalkingSpeed = 5.0f;
-    void UpdateWalking() {
+    void UpdateWalking()
+    {
         float horizontalInput = Input.GetAxis(xAxis) * Time.deltaTime * WalkingSpeed;
         float verticalInput = Input.GetAxis(yAxis) * Time.deltaTime * WalkingSpeed;
         bool shootInputPressed = Input.GetButtonUp(shootKey);

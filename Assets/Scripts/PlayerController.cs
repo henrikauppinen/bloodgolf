@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CharController : MonoBehaviour
+public partial class PlayerController : MonoBehaviour
 {
     public Color PlayerColor { get; private set; }
     private Animator animator;
@@ -10,7 +10,8 @@ public partial class CharController : MonoBehaviour
     private GameObject arrow;
     public int PlayerID = 1;
 
-    public int Health {
+    public int Health
+    {
         get;
         private set;
     }
@@ -40,12 +41,13 @@ public partial class CharController : MonoBehaviour
         altKey = string.Format("Alt{0}", PlayerID);
         InitializeShooting();
         SpawnBall();
-        GameController.instance.UpdateObjectLists();
+        GameManager.instance.UpdateObjectLists();
     }
 
     void Update()
     {
-        switch(charMode) {
+        switch (charMode)
+        {
             case CharMode.Walk:
                 UpdateWalking();
                 break;
@@ -81,7 +83,7 @@ public partial class CharController : MonoBehaviour
     }
 
     void OnGUI()
-    {   
+    {
         if (charMode == CharMode.Shoot)
         {
             DrawShootGUI();

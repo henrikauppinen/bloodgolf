@@ -48,9 +48,9 @@ public class CameraController : MonoBehaviour
         var bbox = new Bounds();
         var first = true;
 
-        if (GameController.instance == null) return bbox;
+        if (GameManager.instance == null) return bbox;
 
-        foreach (var player in GameController.instance.Players)
+        foreach (var player in GameManager.instance.Players)
         {
             if (first)
             {

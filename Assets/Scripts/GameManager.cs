@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class GameController : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static GameController instance;
-    public GameObject[] Balls {get; private set;}
+    public static GameManager instance;
+    public GameObject[] Balls { get; private set; }
     public GameObject[] Players { get; private set; }
-    public CharController[] PlayerControllers { get; private set; }
+    public PlayerController[] PlayerControllers { get; private set; }
     private GUISkin guiSkin;
 
     public void Awake()
@@ -20,30 +20,32 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Balls = new GameObject[]{ };
+        Balls = new GameObject[] { };
         Players = new GameObject[] { };
         guiSkin = Resources.Load<GUISkin>("BloodSkin");
     }
 
-	public void OnDestroy()
-	{
-        if(instance == this) {
+    public void OnDestroy()
+    {
+        if (instance == this)
+        {
             instance = null;
         }
-	}
+    }
 
     public void UpdateObjectLists()
     {
         Balls = GameObject.FindGameObjectsWithTag("Ball");
         Players = GameObject.FindGameObjectsWithTag("Player");
-        PlayerControllers = new CharController[Players.Length];
-        for (var i = 0; i < Players.Length; i++) {
-            PlayerControllers[i] = Players[i].GetComponent<CharController>();
+        PlayerControllers = new PlayerController[Players.Length];
+        for (var i = 0; i < Players.Length; i++)
+        {
+            PlayerControllers[i] = Players[i].GetComponent<PlayerController>();
         }
     }
 
-	public void OnGUI()
-	{
+    public void OnGUI()
+    {
         GUI.skin = guiSkin;
         var playerLabelStyle = new GUIStyle(GUI.skin.label);
         playerLabelStyle.alignment = TextAnchor.LowerCenter;
@@ -67,12 +69,12 @@ public class GameController : MonoBehaviour
             );
             DrawBallTrackerGUI(pc.Ball, pc);
         }
-	}
+    }
 
 
-    private void DrawBallTrackerGUI(GameObject ball, CharController player)
+    private void DrawBallTrackerGUI(GameObject ball, PlayerController player)
     {
-        
+
         var ballScreenPos = Camera.main.WorldToScreenPoint(ball.transform.position);
         ballScreenPos.y = Screen.height - ballScreenPos.y;
         var offScreenXMargin = Screen.width * -.01;
